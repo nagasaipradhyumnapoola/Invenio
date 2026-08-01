@@ -8,9 +8,9 @@ export function SessionDashboard() {
   const { query, plannerStatus, packages, loadSession } = useSessionStore()
   const [inputQuery, setInputQuery] = useState(query)
   
-  // Auto-run on first load if no packages exist
+  // Auto-run on first load if query exists and no packages
   useEffect(() => {
-    if (!packages) {
+    if (query && !packages) {
       loadSession(query)
     }
   }, [])
@@ -32,6 +32,7 @@ export function SessionDashboard() {
   }
 
   const isRunning = Object.values(plannerStatus).some(s => s === 'RUNNING')
+  const hasStarted = query !== ''
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 pb-24">
@@ -56,47 +57,63 @@ export function SessionDashboard() {
           </button>
         </form>
 
-        <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-            {query}
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Autonomous Research Session
-          </p>
-        </div>
-      </header>
-
-      {/* Live Agent Timeline */}
-      <section className="space-y-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Multi-Agent Execution Pipeline</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(plannerStatus).map(([agent, status]) => (
-            <div key={agent} className="p-3 border rounded-lg bg-card shadow-sm flex items-center justify-between">
-              <span className="text-sm font-medium">{agent.replace('Agent', '')}</span>
-              {getStatusIcon(status)}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Report Package Blocks */}
-      <section className="space-y-2 mt-12">
-        {!packages?.reportPackage ? (
-          <div className="py-12 flex flex-col items-center justify-center text-muted-foreground space-y-4">
-            <Loader2 className="w-8 h-8 animate-spin" />
-            <p>Synthesizing research packages into final report...</p>
-          </div>
-        ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            {/* Split markdown by headers or double newlines to make them distinct Editable Blocks */}
-            {packages.reportPackage.markdown_content.split('\n\n').map((blockStr: string, idx: number) => (
-              <EditableBlock key={idx}>
-                <ReactMarkdown>{blockStr}</ReactMarkdown>
-              </EditableBlock>
-            ))}
+        {hasStarted && (
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+              {query}
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Autonomous Research Session
+            </p>
           </div>
         )}
-      </section>
+      </header>
+
+      {!hasStarted ? (
+        <div className="py-24 flex flex-col items-center justify-center text-center">
+          <div className="p-4 bg-primary/10 rounded-full text-primary mb-6">
+            <Sparkles className="w-10 h-10" />
+          </div>
+          <h2 className="text-3xl font-bold mb-4">Start your Research</h2>
+          <p className="text-muted-foreground max-w-lg text-lg">
+            Enter a research topic in the search bar above to launch the autonomous multi-agent pipeline and generate a comprehensive research report.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Live Agent Timeline */}
+          <section className="space-y-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Multi-Agent Execution Pipeline</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(plannerStatus).map(([agent, status]) => (
+                <div key={agent} className="p-3 border rounded-lg bg-card shadow-sm flex items-center justify-between">
+                  <span className="text-sm font-medium">{agent.replace('Agent', '')}</span>
+                  {getStatusIcon(status)}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Report Package Blocks */}
+          <section className="space-y-2 mt-12">
+            {!packages?.reportPackage ? (
+              <div className="py-12 flex flex-col items-center justify-center text-muted-foreground space-y-4">
+                <Loader2 className="w-8 h-8 animate-spin" />
+                <p>Synthesizing research packages into final report...</p>
+              </div>
+            ) : (
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                {/* Split markdown by headers or double newlines to make them distinct Editable Blocks */}
+                {packages.reportPackage.markdown_content.split('\n\n').map((blockStr: string, idx: number) => (
+                  <EditableBlock key={idx}>
+                    <ReactMarkdown>{blockStr}</ReactMarkdown>
+                  </EditableBlock>
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
     </div>
   )
 }

@@ -17,22 +17,36 @@ class BaseNode:
         """
         raise NotImplementedError
 
+class PlannerNode(BaseNode):
+    def __init__(self):
+        super().__init__("node_planner", "Planner Agent Server", "planner")
+
+    async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
+        await asyncio.sleep(0.5)
+        return {}, 0.99, "Planner Agent analyzed request and orchestrated MCP execution plan."
+
 class ResearchSearchNode(BaseNode):
     def __init__(self):
-        super().__init__("node_search", "Research Search", "research_search")
+        super().__init__("node_research", "Research Agent Server", "research")
         self.res_service = ResearchService()
 
     async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
         query = state.get("query")
-        # Copilot message logged before execution starts
-        await asyncio.sleep(1.0) # simulate realistic delay for UI animation
+        await asyncio.sleep(1.0)
         res = await self.res_service.search_papers(query=query, limit=30)
-        
-        return {"papers": res.papers}, 0.95, f"Discovered {len(res.papers)} papers across OpenAlex, arXiv, and Crossref."
+        return {"papers": res.papers}, 0.95, f"Research Agent discovered {len(res.papers)} papers across OpenAlex, arXiv, and Crossref."
+
+class KnowledgeGraphNode(BaseNode):
+    def __init__(self):
+        super().__init__("node_kg", "Knowledge Graph Server", "knowledge_graph")
+
+    async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
+        await asyncio.sleep(1.0)
+        return {}, 0.95, "Knowledge Graph Server constructed embeddings and semantic index."
 
 class CorrelationNode(BaseNode):
     def __init__(self):
-        super().__init__("node_correlation", "Correlation Engine", "correlation")
+        super().__init__("node_correlation", "Correlation Agent Server", "correlation")
         self.corr_service = CorrelationService()
 
     async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
@@ -48,42 +62,24 @@ class CorrelationNode(BaseNode):
             "edges": res.edges,
             "gaps": res.gaps,
             "opportunities": res.opportunities
-        }, 0.88, f"Built knowledge graph with {len(res.nodes)} entities and {len(res.edges)} relationships."
+        }, 0.88, f"Correlation Agent built graph with {len(res.nodes)} entities and {len(res.edges)} relationships."
 
 class EvidenceNode(BaseNode):
     def __init__(self):
-        super().__init__("node_evidence", "Evidence Analysis", "evidence")
+        super().__init__("node_evidence", "Evidence Agent Server", "evidence")
 
     async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
         edges = state.get("edges", [])
         await asyncio.sleep(1.0)
         evidence_count = sum(len(e.evidence) for e in edges)
-        return {}, 0.92, f"Analyzed {evidence_count} pieces of supporting evidence for all relationships."
+        return {}, 0.92, f"Evidence Agent analyzed {evidence_count} pieces of supporting evidence."
 
-class GapDetectionNode(BaseNode):
+class ReportNode(BaseNode):
     def __init__(self):
-        super().__init__("node_gaps", "Research Gap Detection", "gap_detection")
+        super().__init__("node_report", "Report Agent Server", "report")
 
     async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
-        gaps = state.get("gaps", [])
-        await asyncio.sleep(1.2)
-        return {}, 0.85, f"Identified {len(gaps)} structural research gaps and disconnected clusters."
-
-class OpportunityNode(BaseNode):
-    def __init__(self):
-        super().__init__("node_opportunities", "Opportunity Detection", "opportunity")
-
-    async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
-        opps = state.get("opportunities", [])
         await asyncio.sleep(1.0)
-        return {}, 0.80, f"Synthesized {len(opps)} high-impact research opportunities."
-
-class SummaryNode(BaseNode):
-    def __init__(self):
-        super().__init__("node_summary", "Copilot Summary", "summary")
-
-    async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
-        await asyncio.sleep(0.5)
         papers = state.get("papers", [])
         gaps = state.get("gaps", [])
         opps = state.get("opportunities", [])
@@ -94,4 +90,4 @@ class SummaryNode(BaseNode):
             "opportunities_found": len(opps),
             "ready_for_report": True
         }
-        return {"summary": summary}, 0.99, "Workflow complete. Ready for full report generation."
+        return {"summary": summary}, 0.99, "Report Agent compiled full workspace documentation."

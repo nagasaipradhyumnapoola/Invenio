@@ -19,17 +19,16 @@ interface SessionState {
 
 export const useSessionStore = create<SessionState>((set) => ({
   activeSessionId: null,
-  query: "Contrastive Learning Vision",
+  query: "",
   packages: null,
   activeInspectorNode: null,
   plannerStatus: {
-    "ResearchAgent": "QUEUED",
-    "DatasetAgent": "QUEUED",
-    "RepositoryAgent": "QUEUED",
-    "CorrelationAgent": "QUEUED",
-    "EvidenceAgent": "QUEUED",
-    "HypothesisAgent": "QUEUED",
-    "ReportAgent": "QUEUED"
+    "Planner": "QUEUED",
+    "Research": "QUEUED",
+    "KnowledgeGraph": "QUEUED",
+    "Correlation": "QUEUED",
+    "Evidence": "QUEUED",
+    "Report": "QUEUED"
   },
   
   setInspectorNode: (node) => set({ activeInspectorNode: node }),
@@ -43,13 +42,12 @@ export const useSessionStore = create<SessionState>((set) => ({
       activeSessionId: null,
       packages: null,
       plannerStatus: {
-        "ResearchAgent": "QUEUED",
-        "DatasetAgent": "QUEUED",
-        "RepositoryAgent": "QUEUED",
-        "CorrelationAgent": "QUEUED",
-        "EvidenceAgent": "QUEUED",
-        "HypothesisAgent": "QUEUED",
-        "ReportAgent": "QUEUED"
+        "Planner": "QUEUED",
+        "Research": "QUEUED",
+        "KnowledgeGraph": "QUEUED",
+        "Correlation": "QUEUED",
+        "Evidence": "QUEUED",
+        "Report": "QUEUED"
       }
     })
     
@@ -63,37 +61,37 @@ export const useSessionStore = create<SessionState>((set) => ({
       }
       
       // 1. Start real workflow
-      setStatus("ResearchAgent", "RUNNING")
-      setStatus("DatasetAgent", "RUNNING")
-      setStatus("RepositoryAgent", "RUNNING")
+      setStatus("Planner", "RUNNING")
       
       const { run_id } = await startWorkflow(currentQuery)
       set({ activeSessionId: run_id })
       
       // 2. Poll workflow status (Since it's very fast locally, we just do a couple steps for UX)
+      await new Promise(r => setTimeout(r, 500))
+      setStatus("Planner", "COMPLETED")
+      setStatus("Research", "RUNNING")
+      
       await new Promise(r => setTimeout(r, 1000))
-      setStatus("ResearchAgent", "COMPLETED")
-      setStatus("DatasetAgent", "COMPLETED")
-      setStatus("RepositoryAgent", "COMPLETED")
-      setStatus("CorrelationAgent", "RUNNING")
+      setStatus("Research", "COMPLETED")
+      setStatus("KnowledgeGraph", "RUNNING")
+      
+      await new Promise(r => setTimeout(r, 1000))
+      setStatus("KnowledgeGraph", "COMPLETED")
+      setStatus("Correlation", "RUNNING")
       
       await new Promise(r => setTimeout(r, 800))
-      setStatus("CorrelationAgent", "COMPLETED")
-      setStatus("EvidenceAgent", "RUNNING")
+      setStatus("Correlation", "COMPLETED")
+      setStatus("Evidence", "RUNNING")
       
       await new Promise(r => setTimeout(r, 800))
-      setStatus("EvidenceAgent", "COMPLETED")
-      setStatus("HypothesisAgent", "RUNNING")
-      
-      await new Promise(r => setTimeout(r, 600))
-      setStatus("HypothesisAgent", "COMPLETED")
-      setStatus("ReportAgent", "RUNNING")
+      setStatus("Evidence", "COMPLETED")
+      setStatus("Report", "RUNNING")
       
       // 3. Generate the workspace
       const { workspace_id } = await generateWorkspace(run_id)
       const data = await getWorkspace(workspace_id)
       
-      setStatus("ReportAgent", "COMPLETED")
+      setStatus("Report", "COMPLETED")
       
       // Convert real sections to markdown content for the dashboard
       const sections = data.workspace.sections || []
@@ -111,9 +109,9 @@ export const useSessionStore = create<SessionState>((set) => ({
       const setStatus = (agent: string, status: string) => {
         set((state) => ({ plannerStatus: { ...state.plannerStatus, [agent]: status } }))
       }
-      setStatus("ResearchAgent", "FAILED")
-      setStatus("CorrelationAgent", "FAILED")
-      setStatus("ReportAgent", "FAILED")
+      setStatus("Planner", "FAILED")
+      setStatus("Correlation", "FAILED")
+      setStatus("Report", "FAILED")
     }
   }
 }))

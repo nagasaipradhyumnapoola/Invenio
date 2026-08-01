@@ -5,12 +5,12 @@ from typing import Dict, Any, List
 from app.workflow.models import WorkflowRun, WorkflowNodeState, ExecutionLog
 from app.workflow.nodes import (
     BaseNode, 
+    PlannerNode,
     ResearchSearchNode, 
+    KnowledgeGraphNode,
     CorrelationNode, 
     EvidenceNode, 
-    GapDetectionNode, 
-    OpportunityNode, 
-    SummaryNode
+    ReportNode
 )
 
 class WorkflowEngine:
@@ -18,14 +18,14 @@ class WorkflowEngine:
         self.run = run
         self.state: Dict[str, Any] = {"query": run.query}
         
-        # Define the sequential DAG
+        # Define the sequential DAG using MCP Server components
         self.nodes: List[BaseNode] = [
+            PlannerNode(),
             ResearchSearchNode(),
+            KnowledgeGraphNode(),
             CorrelationNode(),
             EvidenceNode(),
-            GapDetectionNode(),
-            OpportunityNode(),
-            SummaryNode()
+            ReportNode()
         ]
         
         # Initialize run nodes
