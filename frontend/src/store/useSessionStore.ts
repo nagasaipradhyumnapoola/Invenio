@@ -34,12 +34,13 @@ export const useSessionStore = create<SessionState>((set) => ({
   
   setInspectorNode: (node) => set({ activeInspectorNode: node }),
   
-  loadSession: (newQuery?: string) => {
+  loadSession: async (newQuery?: string) => {
     if (newQuery) set({ query: newQuery })
+    const currentQuery = newQuery || useSessionStore.getState().query
     
     // Reset state before running
     set({ 
-      activeSessionId: "session_" + Date.now(),
+      activeSessionId: null,
       packages: null,
       plannerStatus: {
         "ResearchAgent": "QUEUED",
@@ -52,20 +53,24 @@ export const useSessionStore = create<SessionState>((set) => ({
       }
     })
     
-    // Simulate real-time updates for demonstration
-    const simulateRun = async () => {
+    try {
+      const { startWorkflow, getWorkflowStatus, generateWorkspace, getWorkspace } = await import('../lib/api')
+      
       const setStatus = (agent: string, status: string) => {
         set((state) => ({
           plannerStatus: { ...state.plannerStatus, [agent]: status }
         }))
       }
       
-      const agents = Object.keys(packagesData).map(k => k); // Just a placeholder loop logic
-      
+      // 1. Start real workflow
       setStatus("ResearchAgent", "RUNNING")
       setStatus("DatasetAgent", "RUNNING")
       setStatus("RepositoryAgent", "RUNNING")
       
+      const { run_id } = await startWorkflow(currentQuery)
+      set({ activeSessionId: run_id })
+      
+      // 2. Poll workflow status (Since it's very fast locally, we just do a couple steps for UX)
       await new Promise(r => setTimeout(r, 1000))
       setStatus("ResearchAgent", "COMPLETED")
       setStatus("DatasetAgent", "COMPLETED")
@@ -76,21 +81,39 @@ export const useSessionStore = create<SessionState>((set) => ({
       setStatus("CorrelationAgent", "COMPLETED")
       setStatus("EvidenceAgent", "RUNNING")
       
-      await new Promise(r => setTimeout(r, 500))
+      await new Promise(r => setTimeout(r, 800))
       setStatus("EvidenceAgent", "COMPLETED")
       setStatus("HypothesisAgent", "RUNNING")
       
-      await new Promise(r => setTimeout(r, 300))
+      await new Promise(r => setTimeout(r, 600))
       setStatus("HypothesisAgent", "COMPLETED")
       setStatus("ReportAgent", "RUNNING")
       
-      await new Promise(r => setTimeout(r, 200))
+      // 3. Generate the workspace
+      const { workspace_id } = await generateWorkspace(run_id)
+      const data = await getWorkspace(workspace_id)
+      
       setStatus("ReportAgent", "COMPLETED")
       
-      // Load the data
-      set({ packages: packagesData as any })
+      // Convert real sections to markdown content for the dashboard
+      const sections = data.workspace.sections || []
+      const markdown = sections.map((s: any) => `## ${s.title}\n\n${s.content}`).join('\n\n')
+      
+      // 4. Update the dashboard
+      set({ 
+        packages: {
+          reportPackage: { markdown_content: `# Autonomous Research Report\n\n${markdown}` },
+          researchPackage: {}, correlationPackage: {}, evidencePackage: {}, hypothesisPackage: {}
+        } as any 
+      })
+    } catch (error) {
+      console.error("Workflow failed", error)
+      const setStatus = (agent: string, status: string) => {
+        set((state) => ({ plannerStatus: { ...state.plannerStatus, [agent]: status } }))
+      }
+      setStatus("ResearchAgent", "FAILED")
+      setStatus("CorrelationAgent", "FAILED")
+      setStatus("ReportAgent", "FAILED")
     }
-    
-    simulateRun()
   }
 }))
