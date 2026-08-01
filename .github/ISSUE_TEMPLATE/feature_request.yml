@@ -1,0 +1,14 @@
+﻿name: Feature Request
+description: Suggest a feature
+labels: ['enhancement']
+body:
+  - type: input
+    id: phase
+    label: Target Phase
+    placeholder: 'Phase 2, Phase 3, etc.'
+  - type: textarea
+    id: description
+    label: Feature Description
+  - type: textarea
+    id: motivation
+    label: Why is this needed?

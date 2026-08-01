@@ -1,0 +1,18 @@
+﻿name: Bug Report
+description: File a bug report
+labels: ['bug']
+body:
+  - type: input
+    id: phase
+    label: Phase
+    placeholder: 'Phase 1, Phase 2, etc.'
+  - type: textarea
+    id: description
+    label: Bug Description
+    description: What happened?
+  - type: textarea
+    id: steps
+    label: Steps to Reproduce
+  - type: textarea
+    id: expected
+    label: Expected Behavior
