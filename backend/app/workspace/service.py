@@ -73,13 +73,17 @@ class WorkspaceService:
 
         # Extract state from the completed workflow run
         snapshot = run.state_snapshot or {}
-        papers = snapshot.get("papers", [])
+        
+        def to_dict_list(obj_list):
+            return [o.model_dump() if hasattr(o, "model_dump") else (o.dict() if hasattr(o, "dict") else o) for o in obj_list]
+
+        papers = to_dict_list(snapshot.get("papers", []))
         
         graph_data = {
-            "nodes": snapshot.get("nodes", []),
-            "edges": snapshot.get("edges", []),
-            "gaps": snapshot.get("gaps", []),
-            "opportunities": snapshot.get("opportunities", [])
+            "nodes": to_dict_list(snapshot.get("nodes", [])),
+            "edges": to_dict_list(snapshot.get("edges", [])),
+            "gaps": to_dict_list(snapshot.get("gaps", [])),
+            "opportunities": to_dict_list(snapshot.get("opportunities", []))
         }
 
         workspace = WorkspaceSession(
