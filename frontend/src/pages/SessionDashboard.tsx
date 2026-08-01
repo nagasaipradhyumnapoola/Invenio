@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useSessionStore } from '../store/useSessionStore'
+import { useWorkflow } from '../hooks/useWorkflow'
 import { EditableBlock } from '../components/workspace/EditableBlock'
 import { Loader2, CheckCircle2, Clock, AlertCircle, Play, Sparkles } from 'lucide-react'
 
 export function SessionDashboard() {
-  const { query, plannerStatus, packages, loadSession } = useSessionStore()
+  const { query, activeSessionId, plannerStatus, packages, loadSession } = useSessionStore()
   const [inputQuery, setInputQuery] = useState(query)
   
+  const { data: statusData } = useWorkflow(activeSessionId)
+  const run = statusData?.run
+
   // Auto-run on first load if query exists and no packages
   useEffect(() => {
     if (query && !packages) {
@@ -16,13 +20,40 @@ export function SessionDashboard() {
   }, [])
   
   const getStatusIcon = (status: string) => {
-    switch(status) {
+    const s = status.toUpperCase()
+    switch(s) {
       case 'COMPLETED': return <CheckCircle2 className="w-4 h-4 text-green-500" />
       case 'RUNNING': return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
       case 'FAILED': return <AlertCircle className="w-4 h-4 text-red-500" />
       default: return <Clock className="w-4 h-4 text-muted-foreground" />
     }
   }
+
+  // Trigger workspace generation when workflow actually completes
+  useEffect(() => {
+    if (run?.status === 'completed' && !packages) {
+      const fetchWorkspace = async () => {
+        try {
+          const { generateWorkspace, getWorkspace } = await import('../lib/api')
+          const { workspace_id } = await generateWorkspace(run.id)
+          const data = await getWorkspace(workspace_id)
+          
+          const sections = data.workspace.sections || []
+          const markdown = sections.map((s: any) => `## ${s.title}\n\n${s.content}`).join('\n\n')
+          
+          useSessionStore.setState({ 
+            packages: {
+              reportPackage: { markdown_content: `# Autonomous Research Report\n\n${markdown}` },
+              researchPackage: {}, correlationPackage: {}, evidencePackage: {}, hypothesisPackage: {}
+            } as any 
+          })
+        } catch (e) {
+          console.error("Failed to generate workspace", e)
+        }
+      }
+      fetchWorkspace()
+    }
+  }, [run?.status, run?.id, packages])
 
   const handleRun = (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +62,9 @@ export function SessionDashboard() {
     }
   }
 
-  const isRunning = Object.values(plannerStatus).some(s => s === 'RUNNING')
+  const isRunningStore = Object.values(plannerStatus).some(s => s === 'RUNNING')
+  const isRunningBackend = run?.status === 'running'
+  const isRunning = isRunningBackend || isRunningStore
   const hasStarted = query !== ''
 
   return (
@@ -84,14 +117,34 @@ export function SessionDashboard() {
           {/* Live Agent Timeline */}
           <section className="space-y-4">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Multi-Agent Execution Pipeline</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(plannerStatus).map(([agent, status]) => (
-                <div key={agent} className="p-3 border rounded-lg bg-card shadow-sm flex items-center justify-between">
-                  <span className="text-sm font-medium">{agent.replace('Agent', '')}</span>
-                  {getStatusIcon(status)}
-                </div>
-              ))}
-            </div>
+            {run && run.nodes ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {run.nodes.map((node) => {
+                  // Get the most recent log for this agent node
+                  const latestLog = run.logs.filter(l => l.node_id === node.id).pop()?.message || "Waiting for execution..."
+                  return (
+                    <div key={node.id} className="p-4 border rounded-lg bg-card shadow-sm space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-primary">{node.label.replace(' Server', '')}</span>
+                        {getStatusIcon(node.status)}
+                      </div>
+                      <div className="text-xs text-muted-foreground bg-primary/5 p-3 rounded-md font-mono border border-primary/10 break-words">
+                        {latestLog}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-50">
+                {Object.entries(plannerStatus).map(([agent, status]) => (
+                  <div key={agent} className="p-3 border rounded-lg bg-card shadow-sm flex items-center justify-between">
+                    <span className="text-sm font-medium">{agent.replace('Agent', '')}</span>
+                    {getStatusIcon(status)}
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Report Package Blocks */}
