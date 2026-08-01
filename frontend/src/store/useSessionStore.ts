@@ -14,7 +14,7 @@ interface SessionState {
   activeInspectorNode: any | null;
   plannerStatus: Record<string, string>;
   setInspectorNode: (node: any) => void;
-  loadSession: () => void;
+  loadSession: (newQuery?: string) => void;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -34,9 +34,23 @@ export const useSessionStore = create<SessionState>((set) => ({
   
   setInspectorNode: (node) => set({ activeInspectorNode: node }),
   
-  loadSession: () => {
-    // Simulate planner loading
-    set({ activeSessionId: "session_1" })
+  loadSession: (newQuery?: string) => {
+    if (newQuery) set({ query: newQuery })
+    
+    // Reset state before running
+    set({ 
+      activeSessionId: "session_" + Date.now(),
+      packages: null,
+      plannerStatus: {
+        "ResearchAgent": "QUEUED",
+        "DatasetAgent": "QUEUED",
+        "RepositoryAgent": "QUEUED",
+        "CorrelationAgent": "QUEUED",
+        "EvidenceAgent": "QUEUED",
+        "HypothesisAgent": "QUEUED",
+        "ReportAgent": "QUEUED"
+      }
+    })
     
     // Simulate real-time updates for demonstration
     const simulateRun = async () => {

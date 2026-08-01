@@ -1,11 +1,19 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useSessionStore } from '../store/useSessionStore'
 import { EditableBlock } from '../components/workspace/EditableBlock'
-import { Loader2, CheckCircle2, Clock, AlertCircle } from 'lucide-react'
+import { Loader2, CheckCircle2, Clock, AlertCircle, Play, Sparkles } from 'lucide-react'
 
 export function SessionDashboard() {
-  const { query, plannerStatus, packages } = useSessionStore()
+  const { query, plannerStatus, packages, loadSession } = useSessionStore()
+  const [inputQuery, setInputQuery] = useState(query)
+  
+  // Auto-run on first load if no packages exist
+  useEffect(() => {
+    if (!packages) {
+      loadSession(query)
+    }
+  }, [])
   
   const getStatusIcon = (status: string) => {
     switch(status) {
@@ -16,16 +24,46 @@ export function SessionDashboard() {
     }
   }
 
+  const handleRun = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (inputQuery.trim()) {
+      loadSession(inputQuery.trim())
+    }
+  }
+
+  const isRunning = Object.values(plannerStatus).some(s => s === 'RUNNING')
+
   return (
     <div className="max-w-4xl mx-auto space-y-12 pb-24">
-      {/* Header */}
-      <header className="space-y-4">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-          {query}
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          Autonomous Research Session
-        </p>
+      {/* Header with Search Bar */}
+      <header className="space-y-6 pt-4">
+        <form onSubmit={handleRun} className="flex gap-3">
+          <input
+            type="text"
+            placeholder="Enter research topic..."
+            value={inputQuery}
+            onChange={(e) => setInputQuery(e.target.value)}
+            disabled={isRunning}
+            className="flex-1 px-4 py-3 rounded-lg border bg-card/50 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/50 text-lg transition-all disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            disabled={!inputQuery.trim() || isRunning}
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-50"
+          >
+            {isRunning ? <Sparkles className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" />}
+            Run Session
+          </button>
+        </form>
+
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+            {query}
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            Autonomous Research Session
+          </p>
+        </div>
       </header>
 
       {/* Live Agent Timeline */}
