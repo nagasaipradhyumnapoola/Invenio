@@ -17,7 +17,7 @@ class SearchResponse(BaseModel):
     papers: List[Paper] = Field(description="List of normalized research papers")
     total: int = Field(description="Total number of results returned in this response")
     page: int = Field(description="Current page number (always 1 for Phase 2 cursor-less search)")
-    hasMore: boolean = Field(alias="has_more", default=False, description="Whether more results exist")
+    hasMore: bool = Field(alias="has_more", default=False, description="Whether more results exist")
     
     class Config:
         populate_by_name = True
