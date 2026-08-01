@@ -89,3 +89,21 @@ Thumbs.db
 .gemini/
 *.local
 .nitrostudio/
+
+# Added by nitrostack pack
+src/widgets/node_modules/
+src/widgets/.next/
+src/widgets/out/
+*~
+pids/
+*.pid
+*.seed
+*.pid.lock
+.nyc_output/
+uploads/
+.npm/
+.eslintcache
+*.pem
+*.key
+tokens.json
+.git/
