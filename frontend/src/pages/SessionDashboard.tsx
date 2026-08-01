@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { cn } from '@/lib/utils'
 import { useSessionStore } from '../store/useSessionStore'
 import { useWorkflow } from '../hooks/useWorkflow'
 import { EditableBlock } from '../components/workspace/EditableBlock'
