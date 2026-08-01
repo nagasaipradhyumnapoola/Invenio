@@ -4,7 +4,6 @@ import { Sidebar } from './Sidebar'
 import { TopNav } from './TopNav'
 import { useSessionStore } from '../../store/useSessionStore'
 import { X, ExternalLink, Lightbulb, Activity, Database, CheckCircle2 } from 'lucide-react'
-import { NitroProcessWidget } from './NitroProcessWidget'
 
 export function WorkspaceLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -100,9 +99,6 @@ export function WorkspaceLayout() {
           </div>
         </aside>
       )}
-
-      {/* ── Nitro 3D Interactive Process Widget ───────── */}
-      <NitroProcessWidget />
     </div>
   )
 }
