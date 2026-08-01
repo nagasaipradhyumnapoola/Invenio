@@ -86,11 +86,17 @@ class WorkspaceService:
             "opportunities": to_dict_list(snapshot.get("opportunities", []))
         }
 
+        evidence_data = {
+            "claims": to_dict_list(snapshot.get("claims", [])),
+            "contradictions": to_dict_list(snapshot.get("contradictions", []))
+        }
+
         workspace = WorkspaceSession(
             run_id=run_id,
             query=query,
             sections=sections,
             graph_data=graph_data,
+            evidence_data=evidence_data,
             raw_papers=papers
         )
         

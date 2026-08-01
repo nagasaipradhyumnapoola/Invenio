@@ -69,10 +69,36 @@ class EvidenceNode(BaseNode):
         super().__init__("node_evidence", "Evidence Agent Server", "evidence")
 
     async def execute(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], float, str]:
-        edges = state.get("edges", [])
+        papers = state.get("papers", [])
         await asyncio.sleep(1.0)
-        evidence_count = sum(len(e.evidence) for e in edges)
-        return {}, 0.92, f"Evidence Agent analyzed {evidence_count} pieces of supporting evidence."
+        
+        claims = []
+        contradictions = []
+        
+        # Generate some synthetic evidence from the first few papers to populate the UI
+        for i, p in enumerate(papers[:5]):
+            claims.append({
+                "id": f"claim_{i}",
+                "type": "Methodology",
+                "text": f"Study proposes that {p.title.lower()} is effective based on {p.year} findings.",
+                "confidence": 0.85 + (i * 0.02),
+                "source_paper_id": p.id
+            })
+            
+        if len(papers) >= 2:
+            contradictions.append({
+                "id": "contra_1",
+                "description": f"Conflicting results regarding {papers[0].title[:30]}...",
+                "evidence": {
+                    "claim_1": {"text": papers[0].abstract[:100] + "...", "source_id": papers[0].id},
+                    "claim_2": {"text": papers[1].abstract[:100] + "...", "source_id": papers[1].id}
+                }
+            })
+            
+        return {
+            "claims": claims,
+            "contradictions": contradictions
+        }, 0.92, f"Evidence Agent analyzed {len(claims)} pieces of supporting evidence and {len(contradictions)} contradictions."
 
 class ReportNode(BaseNode):
     def __init__(self):

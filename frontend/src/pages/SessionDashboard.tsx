@@ -46,7 +46,8 @@ export function SessionDashboard() {
             packages: {
               reportPackage: { markdown_content: `# Autonomous Research Report\n\n${markdown}` },
               researchPackage: { papers: data.workspace.raw_papers || [] },
-              correlationPackage: {}, evidencePackage: {}, hypothesisPackage: {}
+              correlationPackage: { knowledge_graph: data.workspace.graph_data || { nodes: [], edges: [] } },
+              evidencePackage: data.workspace.evidence_data || {}, hypothesisPackage: {}
             } as any 
           })
         } catch (e) {
