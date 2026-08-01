@@ -85,5 +85,6 @@ class WorkflowEngine:
         if self.run.status != "failed":
             self.run.status = "completed"
             self.run.summary = self.state.get("summary", {})
+            self.run.state_snapshot = self.state
             
         self.run.end_time = datetime.datetime.now(datetime.timezone.utc).isoformat()

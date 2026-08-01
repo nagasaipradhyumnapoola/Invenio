@@ -44,7 +44,8 @@ export function SessionDashboard() {
           useSessionStore.setState({ 
             packages: {
               reportPackage: { markdown_content: `# Autonomous Research Report\n\n${markdown}` },
-              researchPackage: {}, correlationPackage: {}, evidencePackage: {}, hypothesisPackage: {}
+              researchPackage: { papers: data.workspace.raw_papers || [] },
+              correlationPackage: {}, evidencePackage: {}, hypothesisPackage: {}
             } as any 
           })
         } catch (e) {

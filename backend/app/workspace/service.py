@@ -71,12 +71,23 @@ class WorkspaceService:
             )
         ]
 
+        # Extract state from the completed workflow run
+        snapshot = run.state_snapshot or {}
+        papers = snapshot.get("papers", [])
+        
+        graph_data = {
+            "nodes": snapshot.get("nodes", []),
+            "edges": snapshot.get("edges", []),
+            "gaps": snapshot.get("gaps", []),
+            "opportunities": snapshot.get("opportunities", [])
+        }
+
         workspace = WorkspaceSession(
             run_id=run_id,
             query=query,
             sections=sections,
-            graph_data={}, # In a real app, pull from engine state
-            raw_papers=[]
+            graph_data=graph_data,
+            raw_papers=papers
         )
         
         self._workspaces[workspace.id] = workspace
