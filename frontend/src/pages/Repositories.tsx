@@ -12,14 +12,17 @@ export function Repositories() {
   const { papers = [] } = packages.researchPackage
   
   // Generate dummy repos based on papers
-  const repos = papers.slice(0, 6).map((p: any, idx: number) => ({
-    name: `invenio-labs/${p.title.split(' ').slice(0, 2).join('-').toLowerCase()}`,
-    description: `Official implementation for the paper: "${p.title}". Contains training code and pretrained models.`,
-    language: idx % 3 === 0 ? 'Python' : (idx % 2 === 0 ? 'Jupyter Notebook' : 'C++'),
-    stars: Math.floor(Math.random() * 500) + 10,
-    forks: Math.floor(Math.random() * 100) + 2,
-    sourcePaper: p.id
-  }))
+  const repos = papers.slice(0, 6).map((p: any, idx: number) => {
+    const title = p.title || 'Unknown Paper';
+    return {
+      name: `invenio-labs/${title.split(' ').slice(0, 2).join('-').toLowerCase()}`,
+      description: `Official implementation for the paper: "${title}". Contains training code and pretrained models.`,
+      language: idx % 3 === 0 ? 'Python' : (idx % 2 === 0 ? 'Jupyter Notebook' : 'C++'),
+      stars: Math.floor(Math.random() * 500) + 10,
+      forks: Math.floor(Math.random() * 100) + 2,
+      sourcePaper: p.id || 'Unknown Source'
+    }
+  })
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-24">

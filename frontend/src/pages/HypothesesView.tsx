@@ -12,13 +12,16 @@ export function HypothesesView() {
   const { papers = [] } = packages.researchPackage
   
   // Generate mock hypotheses from the papers to populate the UI
-  const hypotheses = papers.slice(0, 4).map((p: any, idx: number) => ({
-    title: `Hypothesis on ${p.title.split(' ').slice(0, 4).join(' ')}`,
-    description: `Based on the findings in ${p.year}, we hypothesize that scaling this approach could yield significant improvements in cross-domain transfer learning.`,
-    confidence: (0.7 + Math.random() * 0.2).toFixed(2),
-    status: idx === 0 ? 'Testing' : (idx === 1 ? 'Validated' : 'Proposed'),
-    source: p.id
-  }))
+  const hypotheses = papers.slice(0, 4).map((p: any, idx: number) => {
+    const title = p.title || 'Unknown Paper';
+    return {
+      title: `Hypothesis on ${title.split(' ').slice(0, 4).join(' ')}`,
+      description: `Based on the findings in ${p.year || 'recent literature'}, we hypothesize that scaling this approach could yield significant improvements in cross-domain transfer learning.`,
+      confidence: (0.7 + Math.random() * 0.2).toFixed(2),
+      status: idx === 0 ? 'Testing' : (idx === 1 ? 'Validated' : 'Proposed'),
+      source: p.id || 'Unknown Source'
+    }
+  })
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-24">

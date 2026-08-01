@@ -6,9 +6,11 @@ import { DocumentEditor } from '@/components/workspace/DocumentEditor'
 import { ExportModal } from '@/components/workspace/ExportModal'
 import { useState } from 'react'
 
+import { useSessionStore } from '../store/useSessionStore'
+
 export function Workspace() {
   const [searchParams] = useSearchParams()
-  const runId = searchParams.get('run_id')
+  const runId = searchParams.get('run_id') || useSessionStore(state => state.activeSessionId)
   
   const [workspaceId, setWorkspaceId] = useState<string | null>(null)
   const [showExport, setShowExport] = useState(false)

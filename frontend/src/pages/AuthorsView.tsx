@@ -13,7 +13,7 @@ export function AuthorsView() {
   
   // Extract unique authors
   const authorSet = new Set<string>()
-  papers.forEach((p: any) => p.authors.forEach((a: string) => authorSet.add(a)))
+  papers.forEach((p: any) => p.authors?.forEach((a: any) => authorSet.add(a.name || a || 'Unknown')))
   const authors = Array.from(authorSet).sort()
 
   return (
@@ -31,7 +31,7 @@ export function AuthorsView() {
           <div key={idx} className="p-4 border rounded-lg bg-card hover:border-primary/50 cursor-pointer transition-colors">
             <h3 className="font-semibold text-sm">{author}</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              {papers.filter((p: any) => p.authors.includes(author)).length} Paper(s)
+              {papers.filter((p: any) => p.authors?.some((a: any) => (a.name || a) === author)).length} Paper(s)
             </p>
           </div>
         ))}

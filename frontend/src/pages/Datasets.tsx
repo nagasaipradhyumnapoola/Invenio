@@ -12,13 +12,16 @@ export function Datasets() {
   const { papers = [] } = packages.researchPackage
   
   // Generate dummy datasets based on papers
-  const datasets = papers.slice(0, 8).map((p: any, idx: number) => ({
-    name: `${p.title.split(' ').slice(0, 3).join('-')}-Dataset`.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase(),
-    description: `A collection of data extracted from the study: ${p.title}. Includes preprocessing scripts and raw evaluation metrics.`,
-    size: `${(Math.random() * 500 + 10).toFixed(1)} MB`,
-    format: idx % 2 === 0 ? 'CSV/JSON' : 'HDF5/Images',
-    sourcePaper: p.id
-  }))
+  const datasets = papers.slice(0, 8).map((p: any, idx: number) => {
+    const title = p.title || 'Unknown Paper';
+    return {
+      name: `${title.split(' ').slice(0, 3).join('-')}-Dataset`.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase(),
+      description: `A collection of data extracted from the study: ${title}. Includes preprocessing scripts and raw evaluation metrics.`,
+      size: `${(Math.random() * 500 + 10).toFixed(1)} MB`,
+      format: idx % 2 === 0 ? 'CSV/JSON' : 'HDF5/Images',
+      sourcePaper: p.id || 'Unknown Source'
+    }
+  })
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-24">
