@@ -19,7 +19,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
-  Microscope,
+  Brain,
   FlaskConical,
   Network,
   Database,
@@ -91,7 +91,7 @@ export function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 border-b border-border glass">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-            <Microscope className="w-4 h-4 text-white" />
+            <Brain className="w-4 h-4 text-white" />
           </div>
           <span className="font-semibold text-sm text-foreground">{APP_NAME}</span>
         </div>

@@ -28,7 +28,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Microscope,
+  Brain,
   Users,
   AlertTriangle,
   Lightbulb,
@@ -82,7 +82,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         }}
       >
         <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-          <Microscope className="w-4 h-4 text-white" />
+          <Brain className="w-4 h-4 text-white" />
         </div>
         <AnimatePresence>
           {!collapsed && (
