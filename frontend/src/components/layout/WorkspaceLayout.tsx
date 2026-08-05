@@ -53,7 +53,7 @@ export function WorkspaceLayout() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.75, ease: 'easeOut' }}
             className="w-80 h-full flex flex-col flex-shrink-0 z-30"
             style={{
               background: 'rgba(8, 12, 20, 0.88)',
