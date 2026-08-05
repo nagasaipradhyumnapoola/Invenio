@@ -66,7 +66,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <motion.aside
       animate={{ width: collapsed ? 60 : 260 }}
-      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       className="relative flex flex-col h-full overflow-hidden z-30 flex-shrink-0"
       style={{
         minWidth: collapsed ? 60 : 260,
