@@ -1,15 +1,3 @@
-/**
- * PagePlaceholder — Reusable placeholder for Phase 1 pages
- *
- * Displays a professional "coming soon" layout that communicates:
- * - What the module does
- * - What phase it ships in
- * - What capabilities it will have
- *
- * This is intentionally design-neutral — the UI team will replace
- * all page content in a later phase.
- */
-
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
@@ -38,13 +26,13 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
   },
 }
 
 const item = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
 }
 
 export function PagePlaceholder({
@@ -56,27 +44,46 @@ export function PagePlaceholder({
   className,
 }: PagePlaceholderProps) {
   return (
-    <div className={cn('h-full min-h-screen p-6 md:p-8', className)}>
+    <div className={cn('h-full min-h-screen p-6 md:p-10 relative overflow-hidden', className)}>
+      {/* ── Ambient Background Lighting ──────────────── */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-radial from-violet-500/10 to-transparent blur-[120px] rounded-full pointer-events-none -z-10" />
+
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="max-w-5xl mx-auto space-y-8"
+        className="max-w-6xl mx-auto space-y-12 relative z-10"
       >
         {/* ── Page Header ──────────────────────────── */}
-        <motion.div variants={item} className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              {icon}
+        <motion.div variants={item} className="space-y-4">
+          <div className="flex items-center gap-5">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center relative"
+              style={{
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 179, 237, 0.2))',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                boxShadow: '0 8px 24px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)',
+              }}
+            >
+              <div className="text-violet-400 [&>svg]:w-7 [&>svg]:h-7">
+                {icon}
+              </div>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold text-foreground">{title}</h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted text-muted-foreground border border-border uppercase tracking-wider">
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="text-3xl font-extrabold text-white tracking-tight drop-shadow-sm">{title}</h2>
+                <span
+                  className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  style={{
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#94a3b8'
+                  }}
+                >
                   {phaseBadge}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
+              <p className="text-base text-slate-400 font-medium">{description}</p>
             </div>
           </div>
         </motion.div>
@@ -84,45 +91,49 @@ export function PagePlaceholder({
         {/* ── Status Banner ────────────────────────── */}
         <motion.div
           variants={item}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border bg-muted/30"
+          className="flex items-center gap-4 px-6 py-5 rounded-2xl glass"
         >
-          <div className="w-2 h-2 rounded-full bg-muted-foreground/40 flex-shrink-0" />
-          <p className="text-sm text-muted-foreground">
+          <div className="w-2.5 h-2.5 rounded-full bg-slate-500 flex-shrink-0 animate-pulse" />
+          <p className="text-sm text-slate-400 font-medium">
             This module is part of the Invenio architecture foundation. Implementation begins in{' '}
-            <span className="text-foreground font-medium">{phaseBadge}</span>. The layout and
+            <span className="text-white font-bold">{phaseBadge}</span>. The layout and
             structure are ready for development.
           </p>
         </motion.div>
 
         {/* ── Module Panels ─────────────────────────── */}
         {modules.length > 0 && (
-          <motion.div variants={item} className="space-y-3">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <motion.div variants={item} className="space-y-5">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
               Planned Panels
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {modules.map((mod) => (
                 <motion.div
                   key={mod.label}
                   variants={item}
-                  className={cn(
-                    'group p-4 rounded-lg border border-border bg-card',
-                    'hover:border-primary/30 hover:bg-card/80 transition-all duration-200'
-                  )}
+                  className="group p-6 rounded-3xl glass-card card-hover flex flex-col h-full"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-sm font-medium text-foreground">{mod.label}</span>
-                    <span className="flex-shrink-0 px-1.5 py-0.5 rounded text-[9px] font-medium bg-muted text-muted-foreground uppercase tracking-wide">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <span className="text-base font-bold text-slate-200 group-hover:text-white transition-colors">{mod.label}</span>
+                    <span
+                      className="flex-shrink-0 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest"
+                      style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.06)',
+                        color: '#64748b'
+                      }}
+                    >
                       {mod.phase}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-slate-400 leading-relaxed font-medium mb-5 flex-1">
                     {mod.description}
                   </p>
                   {/* Skeleton lines */}
-                  <div className="mt-3 space-y-1.5">
-                    <div className="h-1.5 bg-muted rounded-full w-3/4" />
-                    <div className="h-1.5 bg-muted rounded-full w-1/2" />
+                  <div className="space-y-2 mt-auto">
+                    <div className="h-2 bg-slate-800 rounded-full w-3/4 group-hover:bg-slate-700 transition-colors" />
+                    <div className="h-2 bg-slate-800 rounded-full w-1/2 group-hover:bg-slate-700 transition-colors" />
                   </div>
                 </motion.div>
               ))}
@@ -133,11 +144,12 @@ export function PagePlaceholder({
         {/* ── Architecture Note ─────────────────────── */}
         <motion.div
           variants={item}
-          className="p-4 rounded-lg border border-dashed border-border bg-transparent"
+          className="p-5 rounded-2xl border border-dashed border-white/10 mt-8"
+          style={{ background: 'rgba(255,255,255,0.01)' }}
         >
-          <p className="text-xs text-muted-foreground font-mono">
+          <p className="text-xs text-slate-500 font-mono">
             {'// '}
-            <span className="text-foreground">{title}</span>
+            <span className="text-slate-300 font-bold">{title}</span>
             {' — see docs/ARCHITECTURE.md for design decisions and docs/PHASES.md for the implementation roadmap.'}
           </p>
         </motion.div>

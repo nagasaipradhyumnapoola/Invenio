@@ -24,19 +24,19 @@ export function DocumentEditor({ sections }: DocumentEditorProps) {
                        insight.type === 'opportunity' ? 'text-amber-500 bg-amber-500/10' : 'text-blue-500 bg-blue-500/10'
 
     return (
-      <div key={insight.id} className="my-4 p-4 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow">
-        <div className="flex items-center gap-2 mb-2">
-          <div className={`p-1.5 rounded-md ${colorClass}`}>
+      <div key={insight.id} className="my-5 p-5 rounded-2xl glass-card border border-white/5 hover:border-primary/30 hover:shadow-md hover:shadow-primary/10 transition-all duration-300 group">
+        <div className="flex items-center gap-3 mb-3">
+          <div className={`p-1.5 rounded-lg ${colorClass}`}>
             <Icon className="w-4 h-4" />
           </div>
-          <h4 className="font-bold">{insight.title}</h4>
-          <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-            Conf: {(insight.confidence * 100).toFixed(0)}%
+          <h4 className="font-bold group-hover:text-primary transition-colors">{insight.title}</h4>
+          <span className="ml-auto text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">
+            {(insight.confidence * 100).toFixed(0)}%
           </span>
         </div>
-        <p className="text-sm text-muted-foreground mb-2">{insight.description}</p>
-        <div className="text-xs bg-muted/50 p-2 rounded border border-border/50 font-mono text-muted-foreground">
-          <strong>AI Reasoning:</strong> {insight.reasoning}
+        <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{insight.description}</p>
+        <div className="text-xs glass p-3 rounded-xl font-mono text-muted-foreground border border-white/5">
+          <strong className="text-foreground/70">AI Reasoning:</strong> {insight.reasoning}
         </div>
       </div>
     )
@@ -46,14 +46,14 @@ export function DocumentEditor({ sections }: DocumentEditorProps) {
     <div className="flex max-w-6xl mx-auto py-12 px-8 pb-32 gap-12">
       {/* Sticky Table of Contents */}
       <aside className="hidden md:block w-64 shrink-0">
-        <div className="sticky top-24 space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Contents</h3>
-          <nav className="flex flex-col space-y-1">
+        <div className="sticky top-24 space-y-1 glass-card rounded-2xl p-4">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">Contents</h3>
+          <nav className="flex flex-col space-y-0.5">
             {editableSections.map((section) => (
               <a 
                 key={`toc-${section.id}`}
                 href={`#section-${section.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-md hover:bg-muted/50 transition-colors truncate"
+                className="text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-xl hover:bg-white/5 transition-all duration-200 truncate"
               >
                 {section.title}
               </a>
@@ -66,7 +66,7 @@ export function DocumentEditor({ sections }: DocumentEditorProps) {
       <div className="flex-1 max-w-3xl">
         {editableSections.map((section, idx) => (
           <section key={section.id} id={`section-${section.id}`} className="mb-16 group scroll-mt-24">
-            <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 group-hover:text-primary transition-colors">
+            <h2 className="text-3xl font-bold mb-6 flex items-center gap-2 group-hover:text-gradient-premium transition-colors duration-300">
               {section.title}
             </h2>
             

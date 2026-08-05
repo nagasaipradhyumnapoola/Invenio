@@ -14,18 +14,18 @@ export function PaperView() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 h-[calc(100vh-8rem)] flex flex-col">
-      <header className="shrink-0">
-        <h1 className="text-3xl font-bold">Research Papers</h1>
+      <header className="shrink-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold text-gradient-premium">Research Papers</h1>
         <p className="text-muted-foreground">Found {papers.length} peer-reviewed publications.</p>
       </header>
       
-      <div className="flex-1 border rounded-lg shadow-sm bg-card overflow-hidden">
+      <div className="flex-1 rounded-2xl shadow-sm glass-card overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150 fill-mode-both">
         <Virtuoso
           style={{ height: '100%' }}
           data={papers}
           itemContent={(index, paper: any) => (
             <div 
-              className="p-6 border-b hover:bg-muted/50 cursor-pointer transition-colors"
+              className="p-6 border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors group"
               onClick={() => setInspectorNode({ ...paper, type: 'Paper' })}
             >
               <div className="flex items-start justify-between gap-4">
