@@ -14,69 +14,49 @@ interface SessionState {
   activeInspectorNode: any | null;
   plannerStatus: Record<string, string>;
   setInspectorNode: (node: any) => void;
-  loadSession: () => void;
+  loadSession: (newQuery?: string) => void;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
   activeSessionId: null,
-  query: "Contrastive Learning Vision",
+  query: "",
   packages: null,
   activeInspectorNode: null,
   plannerStatus: {
-    "ResearchAgent": "QUEUED",
-    "DatasetAgent": "QUEUED",
-    "RepositoryAgent": "QUEUED",
-    "CorrelationAgent": "QUEUED",
-    "EvidenceAgent": "QUEUED",
-    "HypothesisAgent": "QUEUED",
-    "ReportAgent": "QUEUED"
+    "Planner": "QUEUED",
+    "Research": "QUEUED",
+    "KnowledgeGraph": "QUEUED",
+    "Correlation": "QUEUED",
+    "Evidence": "QUEUED",
+    "Report": "QUEUED"
   },
   
   setInspectorNode: (node) => set({ activeInspectorNode: node }),
   
-  loadSession: () => {
-    // Simulate planner loading
-    set({ activeSessionId: "session_1" })
+  loadSession: async (newQuery?: string) => {
+    if (newQuery) set({ query: newQuery })
+    const currentQuery = newQuery || useSessionStore.getState().query
     
-    // Simulate real-time updates for demonstration
-    const simulateRun = async () => {
-      const setStatus = (agent: string, status: string) => {
-        set((state) => ({
-          plannerStatus: { ...state.plannerStatus, [agent]: status }
-        }))
+    // Reset state before running
+    set({ 
+      activeSessionId: null,
+      packages: null,
+      plannerStatus: {
+        "Planner": "QUEUED",
+        "Research": "QUEUED",
+        "KnowledgeGraph": "QUEUED",
+        "Correlation": "QUEUED",
+        "Evidence": "QUEUED",
+        "Report": "QUEUED"
       }
-      
-      const agents = Object.keys(packagesData).map(k => k); // Just a placeholder loop logic
-      
-      setStatus("ResearchAgent", "RUNNING")
-      setStatus("DatasetAgent", "RUNNING")
-      setStatus("RepositoryAgent", "RUNNING")
-      
-      await new Promise(r => setTimeout(r, 1000))
-      setStatus("ResearchAgent", "COMPLETED")
-      setStatus("DatasetAgent", "COMPLETED")
-      setStatus("RepositoryAgent", "COMPLETED")
-      setStatus("CorrelationAgent", "RUNNING")
-      
-      await new Promise(r => setTimeout(r, 800))
-      setStatus("CorrelationAgent", "COMPLETED")
-      setStatus("EvidenceAgent", "RUNNING")
-      
-      await new Promise(r => setTimeout(r, 500))
-      setStatus("EvidenceAgent", "COMPLETED")
-      setStatus("HypothesisAgent", "RUNNING")
-      
-      await new Promise(r => setTimeout(r, 300))
-      setStatus("HypothesisAgent", "COMPLETED")
-      setStatus("ReportAgent", "RUNNING")
-      
-      await new Promise(r => setTimeout(r, 200))
-      setStatus("ReportAgent", "COMPLETED")
-      
-      // Load the data
-      set({ packages: packagesData as any })
-    }
+    })
     
-    simulateRun()
+    try {
+      const { startWorkflow } = await import('../lib/api')
+      const { run_id } = await startWorkflow(currentQuery)
+      set({ activeSessionId: run_id })
+    } catch (error) {
+      console.error("Workflow start failed", error)
+    }
   }
 }))

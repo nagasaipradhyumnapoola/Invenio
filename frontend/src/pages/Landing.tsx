@@ -1,14 +1,25 @@
 /**
  * Landing — Public-Facing Entry Page
  *
- * Premium presentation with floating cards, ambient glowing orbs,
- * and high-end typography.
+ * Phase 1: Professional development shell.
+ *
+ * Purpose:
+ * - Entry point for unauthenticated users
+ * - Communicates Invenio's mission and value proposition
+ * - Directs users to the application (once auth is implemented in Phase 3)
+ *
+ * Future:
+ * - Real authentication flow (Supabase Auth in Phase 3)
+ * - Pricing tiers
+ * - Feature demos and screenshots
+ * - Blog / research announcements
+ * - SEO optimization
  */
 
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
-  Microscope,
+  Brain,
   FlaskConical,
   Network,
   Database,
@@ -25,12 +36,12 @@ import { APP_NAME, APP_TAGLINE } from '@/constants'
 /* ─── Animation Variants ───────────────────────── */
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 }
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 }
 
 /* ─── Feature Item ─────────────────────────────── */
@@ -45,27 +56,15 @@ function FeatureItem({ icon: Icon, title, description }: FeatureItemProps) {
     <motion.div
       variants={fadeUp}
       className={cn(
-        'group p-6 rounded-3xl glass-card card-hover flex flex-col items-start gap-5'
+        'group p-6 rounded-2xl border border-border bg-card',
+        'hover:border-primary/30 hover:bg-card/80 transition-all duration-300'
       )}
     >
-      <div
-        className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300"
-        style={{
-          background: 'linear-gradient(135deg, rgba(99, 179, 237, 0.15), rgba(139, 92, 246, 0.15))',
-          border: '1px solid rgba(255,255,255,0.08)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
-        }}
-      >
-        <Icon className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
+      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+        <Icon className="w-5 h-5 text-primary" />
       </div>
-      <div>
-        <h3 className="text-base font-bold text-slate-100 mb-2 tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-violet-400 transition-all duration-300">
-          {title}
-        </h3>
-        <p className="text-sm text-slate-400 leading-relaxed font-medium">
-          {description}
-        </p>
-      </div>
+      <h3 className="text-sm font-semibold text-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
     </motion.div>
   )
 }
@@ -74,26 +73,10 @@ function FeatureItem({ icon: Icon, title, description }: FeatureItemProps) {
 function ConnectionBadge({ label }: { label: string }) {
   return (
     <span className={cn(
-      'inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold',
-      'transition-all duration-300 cursor-default hover:scale-105'
-    )}
-    style={{
-      background: 'rgba(255, 255, 255, 0.03)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      color: '#94a3b8',
-      backdropFilter: 'blur(8px)',
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.borderColor = 'rgba(99, 179, 237, 0.4)';
-      e.currentTarget.style.color = '#fff';
-      e.currentTarget.style.background = 'rgba(99, 179, 237, 0.1)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-      e.currentTarget.style.color = '#94a3b8';
-      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-    }}
-    >
+      'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
+      'bg-muted/60 text-muted-foreground border border-border',
+      'hover:border-primary/30 hover:text-foreground transition-all duration-200'
+    )}>
       {label}
     </span>
   )
@@ -102,108 +85,117 @@ function ConnectionBadge({ label }: { label: string }) {
 /* ─── Landing Page ─────────────────────────────── */
 export function Landing() {
   return (
-    <div className="min-h-screen bg-transparent overflow-x-hidden relative">
-
-      {/* ── Ambient Background Lighting ──────────────── */}
-      <div className="fixed top-[-20%] right-[-10%] w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gradient-radial from-blue-500/20 to-transparent blur-[120px] rounded-full pointer-events-none -z-10 animate-pulse" style={{ animationDuration: '8s' }} />
-      <div className="fixed bottom-[-10%] left-[-10%] w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-gradient-radial from-violet-500/20 to-transparent blur-[100px] rounded-full pointer-events-none -z-10 animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+    <div className="min-h-screen bg-background overflow-x-hidden">
 
       {/* ── Top Navigation ─────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 glass">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center relative"
-            style={{
-              background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #8b5cf6 100%)',
-              boxShadow: '0 4px 16px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(255,255,255,0.1) inset',
-            }}
-          >
-            <Microscope className="w-4 h-4 text-white" />
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 border-b border-border glass">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
+            <Brain className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-sm tracking-tight text-white">{APP_NAME}</span>
+          <span className="font-semibold text-sm text-foreground">{APP_NAME}</span>
         </div>
         <div className="flex items-center gap-3">
           <Link
             to="/dashboard"
             id="landing-enter-app"
-            className="btn-premium flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white"
+            className={cn(
+              'flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium',
+              'bg-primary text-primary-foreground',
+              'hover:bg-[hsl(var(--primary-hover))] transition-colors duration-150'
+            )}
           >
             Enter App
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </nav>
 
       {/* ── Hero Section ───────────────────────────── */}
-      <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-24 px-6 md:px-12 z-10">
+      <section className="relative flex flex-col items-center justify-center text-center pt-32 pb-20 px-6 md:px-12 overflow-hidden">
+
+        {/* Background dot grid */}
+        <div className="absolute inset-0 bg-dot-pattern opacity-30 pointer-events-none" />
+
+        {/* Gradient orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-[hsl(199,89%,48%)]/5 blur-3xl pointer-events-none" />
+
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="show"
-          className="relative max-w-5xl mx-auto space-y-10"
+          className="relative z-10 max-w-4xl mx-auto space-y-8"
         >
           {/* Badge */}
           <motion.div variants={fadeUp} className="flex justify-center">
-            <span
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-wide"
-              style={{
-                background: 'rgba(99, 179, 237, 0.1)',
-                border: '1px solid rgba(99, 179, 237, 0.3)',
-                color: '#93c5fd',
-                boxShadow: '0 0 20px rgba(99, 179, 237, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)',
-              }}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              PHASE 1 — ARCHITECTURE FOUNDATION
+            <span className={cn(
+              'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium',
+              'border border-primary/30 bg-primary/10 text-primary'
+            )}>
+              <Sparkles className="w-3 h-3" />
+              Phase 1 — Architecture Foundation
             </span>
           </motion.div>
 
           {/* Headline */}
-          <motion.div variants={fadeUp} className="space-y-6">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-[1.1]">
-              <span className="text-white drop-shadow-sm">The Research</span>
+          <motion.div variants={fadeUp} className="space-y-4">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
+              <span className="text-foreground">The Research</span>
               <br />
-              <span className="text-gradient-premium drop-shadow-sm">{APP_TAGLINE}</span>
+              <span className="text-gradient">{APP_TAGLINE}</span>
             </h1>
-            <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-medium">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Invenio connects scientific papers, datasets, repositories, patents, and natural
               phenomena to uncover research opportunities that traditional search cannot.
             </p>
           </motion.div>
 
           {/* CTA */}
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <motion.div variants={fadeUp} className="flex items-center justify-center gap-4">
             <Link
               to="/workflow?demo=true"
               id="landing-cta-demo"
-              className="btn-gradient flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-white shadow-xl shadow-blue-500/20 w-full sm:w-auto justify-center"
+              className={cn(
+                'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold',
+                'bg-primary text-primary-foreground',
+                'hover:bg-[hsl(var(--primary-hover))] transition-all duration-200',
+                'shadow-[0_0_20px_rgba(var(--primary),0.5)] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)]'
+              )}
             >
-              <Sparkles className="w-5 h-5" />
+              <Sparkles className="w-4 h-4" />
               Run Demo Pipeline
             </Link>
             <Link
               to="/dashboard"
               id="landing-cta-primary"
-              className="btn-premium flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold text-white shadow-lg w-full sm:w-auto justify-center"
+              className={cn(
+                'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium',
+                'border border-border text-muted-foreground',
+                'hover:border-primary/30 hover:text-foreground transition-all duration-200'
+              )}
             >
               Open Dashboard
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <a
               href="https://github.com"
               id="landing-cta-github"
-              className="flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold text-slate-300 hover:text-white transition-colors duration-200 w-full sm:w-auto justify-center group"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+              className={cn(
+                'flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium',
+                'border border-border text-muted-foreground',
+                'hover:border-primary/30 hover:text-foreground transition-all duration-200'
+              )}
             >
-              <GitBranch className="w-5 h-5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+              <GitBranch className="w-4 h-4" />
               View on GitHub
             </a>
           </motion.div>
 
           {/* Connection types */}
-          <motion.div variants={fadeUp} className="pt-10 space-y-4">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Connecting across domains</p>
-            <div className="flex flex-wrap justify-center gap-3">
+          <motion.div variants={fadeUp} className="space-y-3">
+            <p className="text-xs text-muted-foreground">Connecting across</p>
+            <div className="flex flex-wrap justify-center gap-2">
               {[
                 'Scientific Papers', 'Datasets', 'Repositories', 'Patents',
                 'Biological Phenomena', 'Mathematical Concepts', 'Algorithms', 'Engineering Techniques',
@@ -216,22 +208,22 @@ export function Landing() {
       </section>
 
       {/* ── Features Grid ──────────────────────────── */}
-      <section className="px-6 md:px-12 py-24 max-w-7xl mx-auto relative z-10">
+      <section className="px-6 md:px-12 py-20 max-w-6xl mx-auto">
         <motion.div
           variants={stagger}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-100px' }}
-          className="space-y-16"
+          className="space-y-10"
         >
-          <motion.div variants={fadeUp} className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Built for Discovery</h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
+          <motion.div variants={fadeUp} className="text-center space-y-2">
+            <h2 className="text-2xl font-bold text-foreground">Built for Discovery</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">
               Every module is designed to surface connections that humans miss and systems can't see.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <FeatureItem
               icon={FlaskConical}
               title="Research Intelligence"
@@ -267,24 +259,24 @@ export function Landing() {
       </section>
 
       {/* ── Architecture Preview ────────────────────── */}
-      <section className="px-6 md:px-12 py-24 max-w-5xl mx-auto relative z-10">
+      <section className="px-6 md:px-12 py-16 max-w-4xl mx-auto">
         <motion.div
           variants={stagger}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-80px' }}
-          className="space-y-12"
+          className="space-y-6"
         >
-          <motion.div variants={fadeUp} className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Architecture First</h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
+          <motion.div variants={fadeUp} className="text-center space-y-2">
+            <h2 className="text-2xl font-bold text-foreground">Architecture First</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">
               Invenio is built for teams. Every module is independently deployable and independently testable.
             </p>
           </motion.div>
 
           <motion.div
             variants={fadeUp}
-            className="p-8 rounded-3xl glass-premium font-mono text-sm space-y-2 overflow-x-auto"
+            className="p-6 rounded-2xl border border-border bg-card font-mono text-xs text-muted-foreground space-y-1 overflow-x-auto"
           >
             {[
               'invenio/',
@@ -296,10 +288,9 @@ export function Landing() {
               '  scripts/      ← Dev environment bootstrap',
               '  tests/        ← Pytest + Vitest integration suites',
               '  .github/      ← CI/CD workflows',
-            ].map((line, i) => (
-              <div key={line} className="flex">
-                <span className="w-8 text-slate-600 select-none mr-4">{i + 1}</span>
-                <span className={line.startsWith('  ') ? 'text-blue-300/80' : 'text-blue-400 font-bold'}>
+            ].map((line) => (
+              <div key={line}>
+                <span className={line.startsWith('  ') ? 'text-foreground/60' : 'text-foreground font-semibold'}>
                   {line}
                 </span>
               </div>
@@ -309,17 +300,17 @@ export function Landing() {
       </section>
 
       {/* ── Footer ─────────────────────────────────── */}
-      <footer className="border-t border-white/10 px-6 md:px-12 py-10 mt-12 bg-black/20 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center">
+      <footer className="border-t border-border px-6 md:px-12 py-8">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded bg-primary flex items-center justify-center">
               <Atom className="w-3 h-3 text-white" />
             </div>
-            <span className="text-sm font-semibold text-slate-300 tracking-wide">
+            <span className="text-sm text-muted-foreground">
               {APP_NAME} — {APP_TAGLINE}
             </span>
           </div>
-          <div className="text-xs font-medium text-slate-500 tracking-widest uppercase">
+          <div className="text-xs text-muted-foreground">
             Phase 1 — Architecture Foundation — v0.1.0
           </div>
         </div>

@@ -35,3 +35,4 @@ class WorkflowRun(BaseModel):
     nodes: List[WorkflowNodeState] = Field(default_factory=list)
     logs: List[ExecutionLog] = Field(default_factory=list)
     summary: Optional[Dict[str, Any]] = None
+    state_snapshot: Dict[str, Any] = Field(default_factory=dict)

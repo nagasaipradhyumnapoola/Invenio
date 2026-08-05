@@ -71,12 +71,33 @@ class WorkspaceService:
             )
         ]
 
+        # Extract state from the completed workflow run
+        snapshot = run.state_snapshot or {}
+        
+        def to_dict_list(obj_list):
+            return [o.model_dump() if hasattr(o, "model_dump") else (o.dict() if hasattr(o, "dict") else o) for o in obj_list]
+
+        papers = to_dict_list(snapshot.get("papers", []))
+        
+        graph_data = {
+            "nodes": to_dict_list(snapshot.get("nodes", [])),
+            "edges": to_dict_list(snapshot.get("edges", [])),
+            "gaps": to_dict_list(snapshot.get("gaps", [])),
+            "opportunities": to_dict_list(snapshot.get("opportunities", []))
+        }
+
+        evidence_data = {
+            "claims": to_dict_list(snapshot.get("claims", [])),
+            "contradictions": to_dict_list(snapshot.get("contradictions", []))
+        }
+
         workspace = WorkspaceSession(
             run_id=run_id,
             query=query,
             sections=sections,
-            graph_data={}, # In a real app, pull from engine state
-            raw_papers=[]
+            graph_data=graph_data,
+            evidence_data=evidence_data,
+            raw_papers=papers
         )
         
         self._workspaces[workspace.id] = workspace

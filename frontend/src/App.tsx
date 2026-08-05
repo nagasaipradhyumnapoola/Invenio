@@ -33,11 +33,14 @@ const Workflow = lazy(() => import('@/pages/Workflow').then(m => ({ default: m.W
 const Research = lazy(() => import('@/pages/PaperView').then(m => ({ default: m.PaperView })))
 const KnowledgeGraph = lazy(() => import('@/pages/KnowledgeGraph').then(m => ({ default: m.KnowledgeGraph })))
 const Evidence = lazy(() => import('@/pages/EvidenceView').then(m => ({ default: m.EvidenceView })))
-const Datasets = lazy(() => import('@/pages/PlaceholderPage').then(m => ({ default: () => <m.PlaceholderPage title="Datasets" /> })))
-const Repositories = lazy(() => import('@/pages/PlaceholderPage').then(m => ({ default: () => <m.PlaceholderPage title="Repositories" /> })))
+const Datasets = lazy(() => import('@/pages/Datasets').then(m => ({ default: m.Datasets })))
+const Repositories = lazy(() => import('@/pages/Repositories').then(m => ({ default: m.Repositories })))
 const Workspace = lazy(() => import('@/pages/Workspace').then(m => ({ default: m.Workspace })))
 const Settings = lazy(() => import('@/pages/Settings').then(m => ({ default: m.Settings })))
 const PlaceholderPage = lazy(() => import('@/pages/PlaceholderPage').then(m => ({ default: m.PlaceholderPage })))
+const Authors = lazy(() => import('@/pages/AuthorsView').then(m => ({ default: m.AuthorsView })))
+const Contradictions = lazy(() => import('@/pages/ContradictionsView').then(m => ({ default: m.ContradictionsView })))
+const Hypotheses = lazy(() => import('@/pages/HypothesesView').then(m => ({ default: m.HypothesesView })))
 
 function SuspenseFallback() {
   return (
@@ -66,9 +69,9 @@ export function App() {
           <Route path="/repositories" element={<Repositories />} />
           <Route path="/workspace" element={<Workspace />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/authors" element={<PlaceholderPage title="Authors" />} />
-          <Route path="/contradictions" element={<PlaceholderPage title="Contradictions" />} />
-          <Route path="/hypotheses" element={<PlaceholderPage title="Hypotheses" />} />
+          <Route path="/authors" element={<Authors />} />
+          <Route path="/contradictions" element={<Contradictions />} />
+          <Route path="/hypotheses" element={<Hypotheses />} />
         </Route>
 
         {/* ── Fallback ───────────────────────────────── */}
