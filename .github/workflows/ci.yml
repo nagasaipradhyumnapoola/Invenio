@@ -40,5 +40,5 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: backend
       - name: Check imports
-        run: python -c 'from app.main import app; print(\"FastAPI app imports OK\")'
+        run: python -c "from app.main import app; print('FastAPI app imports OK')"
         working-directory: backend
